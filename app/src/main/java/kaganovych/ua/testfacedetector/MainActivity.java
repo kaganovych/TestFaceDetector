@@ -11,7 +11,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.FaceDetector;
 import android.net.Uri;
@@ -23,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
     private Camera mCamera;
     private CameraPreview mPreview;
     private Button mCaptureButton;
+    private FaceOverlayView mFaceView;
 
     private Camera.FaceDetectionListener mFaceDetectionListener = new Camera.FaceDetectionListener() {
         @Override
@@ -47,12 +48,7 @@ public class MainActivity extends ActionBarActivity {
             if (faces.length > 0){
                 Log.d(TAG, "Face detected.");
 
-                Camera.Face face[] = new Camera.Face[3];
-                Log.d(TAG, face.length + " face(s) detected.");
-
-                Rect rect = face[0].rect;
-                Log.d(TAG, "width: " + rect.width());
-                Log.d(TAG, "height: " + rect.height());
+                mFaceView.setFaces(faces);
             }
         }
     };
@@ -62,6 +58,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFaceView = new FaceOverlayView(this);
+        addContentView(mFaceView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         mCamera = getCameraInstance();
         mCamera.setFaceDetectionListener(mFaceDetectionListener);
